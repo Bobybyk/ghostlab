@@ -1,96 +1,77 @@
 # GHOSTLAB
 
-**Lien du dépôt gitlab :** https://gitlab.com/SirHenryAllen/ghostlab.git
+*This project was carried out as part of my master's studies in fundamental computer science*
 
-## Répartition du travail
+This is a demonstration to test client/server communication in a multiplayer mini game. 
+It is an attempted to program from scratch at various layers of the network.
 
-### Hugo :
-* **Côté Serveur:**
-    * Parsing des requêtes provenant du client
-    * Traitement des requêtes 
-    * Formatage des réponses pour le client
-    * Envoi des réponses au client
-    * Gestion des structures de données du serveur (verrous, linked list etc...)
-    * Architecture serveur:
-      * Découpage de l'exécution en différentes phases chacune englobée dans un thread
-      * Arborescence du projet
-* **Côté Client:**
-  * Détection des murs pour mise à jour de l'interface graphique
+## Made work
 
-### Matthieu :
+**Server Side:**
+* Parsing client requests
+* Processing requests
+* Formatting responses for the client
+* Sending responses to the client
+* Managing server data structures (locks, linked lists, etc.)
+* Server architecture:
+   * Execution split into different phases, each enclosed within a thread
+   * Project hierarchy
+* Conversion of bytes to little-endian (for sending **h** and **w**)
+* Creation of mazes (.lab files)
+* Parsing .lab files and creating a maze in the game structure
+* Receiving and processing the "GLIS?" command and sending the response to the client
 
-* **Partie client :**
-    
-    * Réception et parsing des commandes venant du serveur
-    * Traitement des commandes et stockage des informations venant du serveur
-    * Parsing des commandes client (console et interface graphique)
-    * Formatage et envoi des commandes au serveur
-    * Création de l'interface graphique
-        * page de connexion
-        * page de gestion des parties
-        * interface de jeu
-    * Système de stockage de l'historique des parties jouées (commande ``historical``)
-    * Système de debogage
+**Client Side:**
+* Wall detection for updating the graphical interface
+* Receiving and parsing commands from the server
+* Processing commands and storing information from the server
+* Parsing client commands (console and graphical interface)
+* Formatting and sending commands to the server
+* Creating the graphical interface:
+   * Login page
+   * Game management page
+   * Game interface
+* System for storing the history of played games (the "historical" command)
+* Debugging system
 
-* **Partie serveur :**
-    * Conversion d'octets en little-endian (pour envoie de **h** et **w**)
+## Compile the Project
 
-### Bastian :
+### Server
 
-* **Partie serveur :**
-
-    * Création des labyrinthes (fichiers .lab)
-    * parsing des fichiers .lab et création d'un labyrinthe dans la structure game
-    * réception et traitement de la commande ``GLIS?`` et envoi de la réponse au client
-
----
-
-## Compiler le projet
-
-### Serveur
-
-Lancer la commande `make` depuis le répertoire `src/main/c/server` 
+Run the `make` command from the `src/main/c/server` directory.
 
 ---
 
 ### Client
 
-Lancer le script `compile.sh` contenu dans le répertoire `src` depuis ce même répertoire
+Run the `compile.sh` script in the `src` directory from the same location.
 
-## Executer le projet
+## Run the Project
 
-### Serveur
+### Server
 
-Exécuter le fichier `server` généré lors de la compilation avec en argument le port désiré.
+Execute the `server` file generated during compilation with the desired port as an argument.
 
-
-**Exemple :**
-
-Pour lancer le serveur en écoute sur le port 12345:
+**Example:**
 
 ```bash
 ./server 12345
 ```
 
+### Client
+Run the launch.sh script located in the src directory (from the same directory).
 
-### Client 
+OR
 
-Exécuter le script `launch.sh` contenu dans le répertoire `src` (depuis ce même répertoire).
+Execute the following command: java main.java.client.Client (from the src directory).
 
-OU
+The following arguments are optional and can be later entered in the graphical interface:
 
-Exécuter la commande suivante: `java main.java.client.Client` (depuis le répertoire `src`).
+**IP:** The server's IP to connect to
+**Port:** The server port to use
+**Username:** The username to use in a game. This username must be exactly 8 characters.
 
-Les arguments suivants sont optionnels et peuvent par la suite être renseignés dans l'interface graphique:
-
-- IP: L'IP du serveur auquel se connecter
-
-- Port: Le port du serveur a utiliser
-
-- Pseudo: Le pseudo a utiliser dans une partie. Ce pseudo doit faire exactement 8 caractères
-
-
-**Exemple :**
+Example:
 
 ```java
 java main.java.client.Client ghostlab-server.com 12345 USERNAME
@@ -100,68 +81,57 @@ java main.java.client.Client ghostlab-server.com 12345 USERNAME
 ./launch.sh
 ```
 
-**Pour supprimer les .class (depuis src):**
+**To remove .class files (from src):**
 
 ```bash
 ./remove_class.sh
 ```
 
-## Comment utiliser le client 
+## How to Use the Client
 
 
-### Partie utilisateur 
+### User Section
 
-Au lancement, si l'utilisateur n'a pas précisé d'informations de connexion, il est invité à entrer les informations du serveur.
+At launch, if the user hasn't provided connection information, they are prompted to enter the server's information.
 
-Une fois connecté, le volet `Game Manager` devient accessible et permet de:
+Once connected, the "Game Manager" section becomes accessible and allows you to:
 
-- créer une partie
-- rejoindre une partie
-- lister les parties existantes et les informations relatives à celles-ci
-- quitter la partie dans laquelle se trouve le client
-- démarrer la partie
+Create a game
+Join a game
+List existing games and their information
+Leave the current game
+Start the game
+Once the game is started, the "game" section allows you to navigate the labyrinth with a visual representation of it. For an optimal view, consider enlarging the window.
 
-Une fois la partie lancée, le volet `game` permet de se déplacer dans la labyrinthe en ayant un retour visuel de ce labyrinthe. Pour une visualisation optimale, penser à agrandir la fenêtre.
+If the player encounters a wall while moving, it is automatically added to the labyrinth map.
 
-Si le joueur rencontre un mur lors de ses déplacements, celui-ci est automatiquement ajouté sur la carte du labyrinthe.
+When the ghosts move, only the last ghost that moved is displayed on the map.
 
-Lorsque les fantômes se déplacent, seul le dernier fantôme à s'être déplacé est affiché sur la carte.
+### Developer Section
 
-### Partie développeur
+We've created a debugging system to enable or disable specific feedback.
+We've created commands to perform client-side actions independently of the server (help, kill, killclient, etc.).
+There are commands to perform these actions from the program.
 
-* Nous avons créé un système de débogage permettant d'activer ou de désactiver certains retours.
-* Nous avons créé des commandes permettant d'effectuer des actions côté client, indépendament du serveur (help, kill, killclient...)
+For more information: Use the "help" command (or the "help" button) in the program.
 
-Il existe des commandes pour effectuer ces actions depuis le programme
+## Server Architecture
 
-**Pour plus d'information :** utiliser la commande **help** (ou le bouton **aide**) dans le programme 
+The server continuously waits for connections and delegates protocol handling to a thread. During client/server interactions, multiple threads follow one another in processing client requests, with each thread representing a phase in the lifetime of a game. The different phases are as follows:
 
-## Architecture du serveur 
+1. The client has just connected.
+2. The client has created or joined a game.
+3. The game has been launched.
+4. The game is completed.
 
+Each game has:
 
-Le serveur attend en boucle des connexions et délègue le traitement du protocole à un thread.
-Au cours des interactions client/serveur, plusieurs threads se succèdent dans le traitement des requêtes du client: chaque thread représentant une phase de la durée de vie d'une partie.
-Les différentes phases sont les suivantes:
+- Its own lock to prevent concurrent modifications to the list of players.
+- Its own UDP socket used for multicasting and sending private messages.
+- 
+The multicast IP is unique to the server, with only the port changing for each created game.
 
-1. le client vient de se connecter
-2. le client a créé ou rejoint une partie
-3. la partie a été lancée
-4. la partie est terminée 
+Mazes are retrieved from files following these rules:
 
-Chaque partie possède:
-
-- son propre verrou pour empêcher les modifications concurrentes sur la liste des joueurs.
-- son propre socket UDP utilisé pour multi-caster et envoyer les messages privés
-
-L'IP de multi-diffusion est unique au serveur, seul le port change pour chaque partie créée.
-
-Les labyrinthes sont récupérés depuis des fichiers respectant les règles suivantes:
-
-- Une première ligne contenant deux entiers `i` et `j,` `i  représentant la largeur et `j` la hauteur
-- `j` lignes de chacune `i` colonnes composées de `1` ou de `0`, `1` représentant un mur et `0` un chemin
-- Une ligne vide
-
-
-
-
-
+The first line containing two integers i and j, with i representing the width and j the height.
+j lines, each with i columns consisting of 1 or 0, where 1 represents a wall and 0 represents a path.
